@@ -1,11 +1,8 @@
 package com.github.kimhun456.memoapplication.presentation.main
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.toLiveData
 import com.github.kimhun456.memoapplication.domain.entity.Memo
 import com.github.kimhun456.memoapplication.domain.interactor.memo.CreateMemoUseCase
-import com.github.kimhun456.memoapplication.domain.interactor.memo.FlowAllMemoUseCase
 import com.github.kimhun456.memoapplication.domain.interactor.memo.RemoveMemoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -17,13 +14,8 @@ import kotlin.random.Random
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val createMemoUseCase: CreateMemoUseCase,
-    private val removeMemoUseCase: RemoveMemoUseCase,
-    private val flowAllMemoUseCase: FlowAllMemoUseCase
+    private val removeMemoUseCase: RemoveMemoUseCase
 ) : ViewModel() {
-
-    private val _memoList = flowAllMemoUseCase.flowMemos().toLiveData()
-
-    val memoList: LiveData<List<Memo>> = _memoList
 
     fun addMemo() {
         createMemoUseCase.createMemo(generateRandomMemo())

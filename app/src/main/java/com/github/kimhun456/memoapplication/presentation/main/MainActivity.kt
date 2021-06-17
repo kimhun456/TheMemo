@@ -7,19 +7,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.github.kimhun456.memoapplication.presentation.list.ListScreen
+import com.github.kimhun456.memoapplication.presentation.list.ListViewModel
 import com.github.kimhun456.memoapplication.presentation.theme.TheMemoTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel by viewModels<MainViewModel>()
+    private val mainViewModel by viewModels<MainViewModel>()
+    private val listViewModel by viewModels<ListViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,43 +39,48 @@ class MainActivity : AppCompatActivity() {
         val scaffoldState = rememberScaffoldState()
         val scope = rememberCoroutineScope()
         Scaffold(
-            modifier = Modifier.padding(8.dp),
             scaffoldState = scaffoldState,
+            topBar = {
+                MainTopAppBar()
+            },
             bottomBar = {
                 MainBottomAppBar(
                     onClickMenuIcon = {
-                        scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar("Menu clicked")
-                        }
+                        showSnackbar(scope, scaffoldState.snackbarHostState, "Menu clicked")
                     },
                     onClickSettingsIcon = {
-                        scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar("setting clicked")
-                        }
+                        showSnackbar(scope, scaffoldState.snackbarHostState, "setting clicked")
                     },
                     onClickAddIcon = {
-                        scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar("plus clicked")
-                        }
+                        showSnackbar(scope, scaffoldState.snackbarHostState, "plus clicked")
                     }
                 )
             },
             floatingActionButton = {
                 WriteButton {
-                    viewModel.addMemo()
-                    scope.launch {
-                        scaffoldState.snackbarHostState.showSnackbar("Add Generated Memo")
-                    }
+                    mainViewModel.addMemo()
+                    showSnackbar(scope, scaffoldState.snackbarHostState, "Add Generated Memo")
                 }
             },
             isFloatingActionButtonDocked = true,
             floatingActionButtonPosition = FabPosition.Center,
         )
         { innerPadding ->
-            MainScreen(
+            ListScreen(
                 modifier = Modifier.padding(innerPadding),
-                viewModel = viewModel
+                listViewModel = listViewModel
             )
+        }
+    }
+
+    private fun showSnackbar(
+        scope: CoroutineScope,
+        snackbarHostState: SnackbarHostState,
+        message: String
+    ) {
+        scope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(message)
         }
     }
 }
