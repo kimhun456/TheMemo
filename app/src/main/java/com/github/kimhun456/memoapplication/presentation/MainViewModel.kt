@@ -1,4 +1,4 @@
-package com.github.kimhun456.memoapplication.presentation.main
+package com.github.kimhun456.memoapplication.presentation
 
 import androidx.lifecycle.ViewModel
 import com.github.kimhun456.memoapplication.domain.entity.Memo

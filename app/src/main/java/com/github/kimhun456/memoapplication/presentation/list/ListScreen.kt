@@ -17,15 +17,16 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.github.kimhun456.memoapplication.domain.entity.Memo
 import com.github.kimhun456.memoapplication.presentation.theme.TheMemoTheme
 
 @Composable
 fun ListScreen(
-    modifier: Modifier,
-    listViewModel: ListViewModel
+    listViewModel: ListViewModel,
+    navController: NavController
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize()) {
         MemoList(listViewModel)
     }
 }
@@ -37,7 +38,9 @@ fun MemoList(listViewModel: ListViewModel) {
         contentPadding = PaddingValues(top = 8.dp)
     ) {
         items(items = memoList) { memo ->
-            MemoCard(memo) { }
+            MemoCard(memo) {
+                // TODO : go to memo
+            }
         }
     }
 }
