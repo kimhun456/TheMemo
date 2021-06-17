@@ -2,10 +2,11 @@
 buildscript {
 
     ext {
-        compose_version = '1.0.0-beta08'
-        activity_compose_version = '1.3.0-beta01'
-        viewmodel_compose_version = '1.0.0-alpha06'
+        compose_version = '1.0.0-beta09'
+        activity_compose_version = '1.3.0-beta02'
+        viewmodel_compose_version = '1.0.0-alpha07'
         kotlin_version = '1.5.10'
+        room_version = "2.3.0"
     }
     repositories {
         google()
@@ -13,7 +14,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.0-alpha01'
+        classpath 'com.android.tools.build:gradle:7.1.0-alpha02'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.28-alpha'
     }
