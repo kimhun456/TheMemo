@@ -2,6 +2,8 @@ package com.github.kimhun456.memoapplication.presentation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomAppBar
@@ -47,10 +49,28 @@ fun TheMemoApp(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            TheMemoTopAppBar()
+            AnimatedVisibility(
+                visible = currentScreen == TheMemoDestinations.ALL_LIST_ROUTE,
+                enter = slideInVertically(
+                    initialOffsetY = { -it }
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { -it }
+                )
+            ) {
+                TheMemoTopAppBar()
+            }
         },
         bottomBar = {
-            AnimatedVisibility(visible = currentScreen == TheMemoDestinations.ALL_LIST_ROUTE) {
+            AnimatedVisibility(
+                visible = currentScreen == TheMemoDestinations.ALL_LIST_ROUTE,
+                enter = slideInVertically(
+                    initialOffsetY = { it }
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { it }
+                )
+            ) {
                 TheMemoBottomAppBar(
                     onClickMenuIcon = {
                         showSnackbar(scope, scaffoldState.snackbarHostState, "Menu clicked")
@@ -66,9 +86,19 @@ fun TheMemoApp(
             }
         },
         floatingActionButton = {
-            AnimatedVisibility(visible = currentScreen == TheMemoDestinations.ALL_LIST_ROUTE) {
+            AnimatedVisibility(
+                visible = currentScreen == TheMemoDestinations.ALL_LIST_ROUTE,
+                enter = slideInVertically(
+                    initialOffsetY = { it }
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { it * 2 }
+                )
+            ) {
                 AddButton {
-                    navController.navigate(TheMemoDestinations.ADD_ROUTE.name)
+                    navController.navigate(
+                        route = TheMemoDestinations.ADD_ROUTE.name
+                    )
                 }
             }
         },
