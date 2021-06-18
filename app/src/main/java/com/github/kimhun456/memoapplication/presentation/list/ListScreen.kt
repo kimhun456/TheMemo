@@ -9,12 +9,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -61,7 +61,7 @@ fun MemoCard(
         Column(
             modifier = Modifier.padding(15.dp)
         ) {
-            Text(text = memo.title, style = MaterialTheme.typography.h5)
+            Text(text = memo.title, fontWeight = FontWeight.Bold)
             Text(text = memo.message)
         }
     }

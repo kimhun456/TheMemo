@@ -4,26 +4,34 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -31,6 +39,8 @@ import androidx.navigation.compose.rememberNavController
 import com.github.kimhun456.memoapplication.R
 import com.github.kimhun456.memoapplication.presentation.list.ListViewModel
 import com.github.kimhun456.memoapplication.presentation.theme.TheMemoTheme
+import com.google.accompanist.insets.navigationBarsHeight
+import com.google.accompanist.insets.statusBarsHeight
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -49,17 +59,12 @@ fun TheMemoApp(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            AnimatedVisibility(
-                visible = currentScreen == TheMemoDestinations.ALL_LIST_ROUTE,
-                enter = slideInVertically(
-                    initialOffsetY = { -it }
-                ),
-                exit = slideOutVertically(
-                    targetOffsetY = { -it }
-                )
-            ) {
-                TheMemoTopAppBar()
-            }
+            TheMemoTopAppBar(
+                currentScreen = currentScreen,
+                onBackClick = {
+                    navController.navigate(TheMemoDestinations.ALL_LIST_ROUTE.name)
+                }
+            )
         },
         bottomBar = {
             AnimatedVisibility(
@@ -80,7 +85,11 @@ fun TheMemoApp(
                     },
                     onClickAddIcon = {
                         mainViewModel.addMemo()
-                        showSnackbar(scope, scaffoldState.snackbarHostState, "Add Generated Memo")
+                        showSnackbar(
+                            scope,
+                            scaffoldState.snackbarHostState,
+                            "Add Generated Memo"
+                        )
                     }
                 )
             }
@@ -126,12 +135,52 @@ private fun showSnackbar(
 }
 
 @Composable
-fun TheMemoTopAppBar() {
-    TopAppBar(
-        title = {
-            Text(text = stringResource(id = R.string.app_name))
+fun TheMemoTopAppBar(
+    currentScreen: TheMemoDestinations,
+    onMenuClick: () -> Unit = {},
+    onBackClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {}
+) {
+    Column {
+        Spacer(
+            Modifier
+                .background(color = MaterialTheme.colors.primarySurface.copy(alpha = 0.7f))
+                .statusBarsHeight() // Match the height of the status bar
+                .fillMaxWidth()
+        )
+        if (currentScreen == TheMemoDestinations.ALL_LIST_ROUTE) {
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(
+                        onClick = onMenuClick
+                    ) {
+                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                    }
+                },
+                title = {
+                    Text(text = stringResource(id = R.string.app_name))
+                }
+            )
+        } else {
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(
+                        onClick = onBackClick
+                    ) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = onDeleteClick
+                    ) {
+                        Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                    }
+                },
+                title = {},
+            )
         }
-    )
+    }
 }
 
 @Composable
@@ -140,28 +189,36 @@ fun TheMemoBottomAppBar(
     onClickSettingsIcon: () -> Unit = {},
     onClickAddIcon: () -> Unit = {}
 ) {
-    BottomAppBar(
-        cutoutShape = RoundedCornerShape(percent = 50)
-    ) {
-        IconButton(onClick = onClickMenuIcon) {
-            Icon(
-                Icons.Filled.Menu,
-                contentDescription = "Menu"
-            )
+    Column {
+        BottomAppBar(
+            cutoutShape = RoundedCornerShape(percent = 50)
+        ) {
+            IconButton(onClick = onClickMenuIcon) {
+                Icon(
+                    Icons.Filled.Menu,
+                    contentDescription = "Menu"
+                )
+            }
+            Spacer(Modifier.weight(1f, true))
+            IconButton(onClick = onClickSettingsIcon) {
+                Icon(
+                    Icons.Filled.Settings,
+                    contentDescription = "Settings"
+                )
+            }
+            IconButton(onClick = onClickAddIcon) {
+                Icon(
+                    Icons.Filled.Add,
+                    contentDescription = "Add"
+                )
+            }
         }
-        Spacer(Modifier.weight(1f, true))
-        IconButton(onClick = onClickSettingsIcon) {
-            Icon(
-                Icons.Filled.Settings,
-                contentDescription = "Settings"
-            )
-        }
-        IconButton(onClick = onClickAddIcon) {
-            Icon(
-                Icons.Filled.Add,
-                contentDescription = "Add"
-            )
-        }
+        Spacer(
+            Modifier
+                .background(Color.Black.copy(alpha = 0.7f))
+                .navigationBarsHeight() // Match the height of the status bar
+                .fillMaxWidth()
+        )
     }
 }
 
@@ -176,9 +233,7 @@ fun AddButton(onClick: () -> Unit) {
 @Composable
 fun PreviewTheMemoTopAppBar() {
     TheMemoTheme {
-        TopAppBar {
-
-        }
+        TheMemoTopAppBar(currentScreen = TheMemoDestinations.ALL_LIST_ROUTE)
     }
 }
 
