@@ -1,17 +1,16 @@
 package com.github.kimhun456.memoapplication.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.kimhun456.memoapplication.presentation.add.AddScreen
 import com.github.kimhun456.memoapplication.presentation.list.ListScreen
-import com.github.kimhun456.memoapplication.presentation.list.ListViewModel
 
 @Composable
 fun NavGraph(
-    listViewModel: ListViewModel,
     navController: NavHostController = rememberNavController(),
 ) {
     NavHost(
@@ -20,12 +19,15 @@ fun NavGraph(
     ) {
         composable(TheMemoDestinations.ALL_LIST_ROUTE.name) {
             ListScreen(
-                listViewModel = listViewModel,
+                listViewModel = hiltViewModel(),
                 navController = navController
             )
         }
         composable(TheMemoDestinations.ADD_ROUTE.name) {
-            AddScreen()
+            AddScreen(
+                addViewModel = hiltViewModel(),
+                navController = navController
+            )
         }
     }
 }

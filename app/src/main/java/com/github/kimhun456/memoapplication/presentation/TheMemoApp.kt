@@ -1,6 +1,7 @@
 package com.github.kimhun456.memoapplication.presentation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -34,10 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.github.kimhun456.memoapplication.R
-import com.github.kimhun456.memoapplication.presentation.list.ListViewModel
 import com.github.kimhun456.memoapplication.presentation.theme.TheMemoTheme
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.statusBarsHeight
@@ -48,8 +49,7 @@ import timber.log.Timber
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TheMemoApp(
-    listViewModel: ListViewModel,
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel = viewModel()
 ) {
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
@@ -115,10 +115,7 @@ fun TheMemoApp(
         floatingActionButtonPosition = FabPosition.Center,
     )
     {
-        NavGraph(
-            listViewModel = listViewModel,
-            navController = navController
-        )
+        NavGraph(navController = navController)
     }
 }
 
@@ -134,6 +131,7 @@ private fun showSnackbar(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TheMemoTopAppBar(
     currentScreen: TheMemoDestinations,
@@ -148,38 +146,46 @@ fun TheMemoTopAppBar(
                 .statusBarsHeight() // Match the height of the status bar
                 .fillMaxWidth()
         )
-        if (currentScreen == TheMemoDestinations.ALL_LIST_ROUTE) {
-            TopAppBar(
-                navigationIcon = {
-                    IconButton(
-                        onClick = onMenuClick
-                    ) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
+        TopAppBar(
+            navigationIcon = {
+                Crossfade(targetState = currentScreen) { screen ->
+                    when (screen) {
+                        TheMemoDestinations.ADD_ROUTE ->
+                            IconButton(
+                                onClick = onBackClick
+                            ) {
+                                Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                            }
+                        TheMemoDestinations.ALL_LIST_ROUTE, TheMemoDestinations.EDIT_ROUTE ->
+                            IconButton(
+                                onClick = onMenuClick
+                            ) {
+                                Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                            }
                     }
-                },
-                title = {
-                    Text(text = stringResource(id = R.string.app_name))
                 }
-            )
-        } else {
-            TopAppBar(
-                navigationIcon = {
-                    IconButton(
-                        onClick = onBackClick
-                    ) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+            },
+            title = {
+                when (currentScreen) {
+                    TheMemoDestinations.ALL_LIST_ROUTE, TheMemoDestinations.EDIT_ROUTE ->
+                        Text(text = stringResource(id = R.string.app_name))
+                    TheMemoDestinations.ADD_ROUTE -> {
+                        // Not used
                     }
-                },
-                actions = {
+                }
+            },
+            actions = {
+                AnimatedVisibility(
+                    visible = currentScreen == TheMemoDestinations.ALL_LIST_ROUTE
+                ) {
                     IconButton(
                         onClick = onDeleteClick
                     ) {
                         Icon(Icons.Filled.Delete, contentDescription = "Delete")
                     }
-                },
-                title = {},
-            )
-        }
+                }
+            }
+        )
     }
 }
 

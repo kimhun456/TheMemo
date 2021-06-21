@@ -22,11 +22,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.github.kimhun456.memoapplication.presentation.theme.TheMemoTheme
 import com.google.accompanist.insets.navigationBarsWithImePadding
 
 @Composable
-fun AddScreen() {
+fun AddScreen(
+    addViewModel: AddViewModel,
+    navController: NavController
+) {
     Column() {
         val titleState = remember { mutableStateOf(TextFieldValue()) }
         val bodyState = remember { mutableStateOf(TextFieldValue()) }
