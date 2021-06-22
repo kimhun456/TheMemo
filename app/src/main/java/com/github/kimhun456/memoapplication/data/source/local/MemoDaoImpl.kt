@@ -28,6 +28,6 @@ abstract class MemoDaoImpl : MemoDao {
     @Query("SELECT * FROM memo WHERE id = :id")
     abstract override fun getMemo(id: Long): Single<MemoEntity>
 
-    @Query("SELECT * FROM memo")
+    @Query("SELECT * FROM memo ORDER BY lastModifiedTime DESC")
     abstract override fun getAllMemos(): Flowable<List<MemoEntity>>
 }

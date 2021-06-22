@@ -1,47 +1,20 @@
 package com.github.kimhun456.memoapplication.presentation
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomAppBar
 import androidx.compose.material.FabPosition
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.github.kimhun456.memoapplication.R
-import com.github.kimhun456.memoapplication.presentation.theme.TheMemoTheme
-import com.google.accompanist.insets.navigationBarsHeight
-import com.google.accompanist.insets.statusBarsHeight
+import com.github.kimhun456.memoapplication.presentation.main.CreateMemoButton
+import com.github.kimhun456.memoapplication.presentation.main.TheMemoBottomAppBar
+import com.github.kimhun456.memoapplication.presentation.main.TheMemoTopAppBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -67,45 +40,28 @@ fun TheMemoApp(
             )
         },
         bottomBar = {
-            AnimatedVisibility(
-                visible = currentScreen == TheMemoDestinations.ALL_LIST_ROUTE,
-                enter = slideInVertically(
-                    initialOffsetY = { it }
-                ),
-                exit = slideOutVertically(
-                    targetOffsetY = { it }
-                )
-            ) {
-                TheMemoBottomAppBar(
-                    onClickAddIcon = {
-                        mainViewModel.addMemo()
-                        showSnackbar(
-                            scope,
-                            scaffoldState.snackbarHostState,
-                            "Add Generated Memo"
-                        )
-                    }
-                )
-            }
+            TheMemoBottomAppBar(
+                currentScreen = currentScreen,
+                onClickAddIcon = {
+                    mainViewModel.addMemo()
+                    showSnackbar(
+                        scope,
+                        scaffoldState.snackbarHostState,
+                        "Add Generated Memo"
+                    )
+                }
+            )
         },
         floatingActionButton = {
-            AnimatedVisibility(
-                visible = currentScreen == TheMemoDestinations.ALL_LIST_ROUTE,
-                enter = slideInVertically(
-                    initialOffsetY = { it }
-                ),
-                exit = slideOutVertically(
-                    targetOffsetY = { it * 2 }
-                )
-            ) {
-                AddButton {
+            if (currentScreen == TheMemoDestinations.ALL_LIST_ROUTE) {
+                CreateMemoButton {
                     navController.navigate(route = TheMemoDestinations.ADD_ROUTE.name) {
                         launchSingleTop = true
                     }
                 }
             }
         },
-        isFloatingActionButtonDocked = true,
+        isFloatingActionButtonDocked = currentScreen == TheMemoDestinations.ALL_LIST_ROUTE,
         floatingActionButtonPosition = FabPosition.Center,
     )
     {
@@ -125,121 +81,5 @@ private fun showSnackbar(
         Timber.d("showSnackbar : $message")
         snackbarHostState.currentSnackbarData?.dismiss()
         snackbarHostState.showSnackbar(message)
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun TheMemoTopAppBar(
-    currentScreen: TheMemoDestinations,
-    onMenuClick: () -> Unit = {},
-    onBackClick: () -> Unit = {},
-    onDeleteClick: () -> Unit = {}
-) {
-    Column {
-        Spacer(
-            Modifier
-                .background(color = MaterialTheme.colors.primarySurface.copy(alpha = 0.7f))
-                .statusBarsHeight() // Match the height of the status bar
-                .fillMaxWidth()
-        )
-        TopAppBar(
-            navigationIcon = {
-                Crossfade(targetState = currentScreen) { screen ->
-                    when (screen) {
-                        TheMemoDestinations.ADD_ROUTE ->
-                            IconButton(
-                                onClick = onBackClick
-                            ) {
-                                Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-                            }
-                        TheMemoDestinations.ALL_LIST_ROUTE, TheMemoDestinations.EDIT_ROUTE ->
-                            IconButton(
-                                onClick = onMenuClick
-                            ) {
-                                Icon(Icons.Filled.Menu, contentDescription = "Menu")
-                            }
-                    }
-                }
-            },
-            title = {
-                when (currentScreen) {
-                    TheMemoDestinations.ALL_LIST_ROUTE, TheMemoDestinations.EDIT_ROUTE ->
-                        Text(text = stringResource(id = R.string.app_name))
-                    TheMemoDestinations.ADD_ROUTE -> {
-                        // Not used
-                    }
-                }
-            },
-            actions = {
-                AnimatedVisibility(
-                    visible = currentScreen == TheMemoDestinations.ALL_LIST_ROUTE
-                ) {
-                    IconButton(
-                        onClick = onDeleteClick
-                    ) {
-                        Icon(Icons.Filled.Delete, contentDescription = "Delete")
-                    }
-                }
-            }
-        )
-    }
-}
-
-@Composable
-fun TheMemoBottomAppBar(
-    onClickAddIcon: () -> Unit = {}
-) {
-    Column {
-        BottomAppBar(
-            cutoutShape = RoundedCornerShape(percent = 50)
-        ) {
-            Spacer(Modifier.weight(1f, true))
-            IconButton(onClick = onClickAddIcon) {
-                Icon(
-                    Icons.Filled.Add,
-                    contentDescription = "Add"
-                )
-            }
-        }
-        Spacer(
-            Modifier
-                .background(Color.Black.copy(alpha = 0.7f))
-                .navigationBarsHeight() // Match the height of the status bar
-                .fillMaxWidth()
-        )
-    }
-}
-
-@Composable
-fun AddButton(onClick: () -> Unit) {
-    FloatingActionButton(onClick = onClick) {
-        Icon(Icons.Filled.Edit, contentDescription = "Write start")
-    }
-}
-
-@Preview
-@Composable
-fun PreviewTheMemoTopAppBar() {
-    TheMemoTheme {
-        TheMemoTopAppBar(currentScreen = TheMemoDestinations.ALL_LIST_ROUTE)
-    }
-}
-
-@Preview
-@Composable
-fun PreviewTheMemoBottomAppBar() {
-    TheMemoTheme {
-        TheMemoBottomAppBar()
-    }
-}
-
-@Preview
-@Composable
-fun PreviewAddButton() {
-    TheMemoTheme {
-        AddButton {
-
-        }
     }
 }

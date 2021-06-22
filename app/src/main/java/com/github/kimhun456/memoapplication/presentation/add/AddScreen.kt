@@ -1,19 +1,12 @@
 package com.github.kimhun456.memoapplication.presentation.add
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.BottomAppBar
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Redo
-import androidx.compose.material.icons.filled.Undo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.github.kimhun456.memoapplication.presentation.theme.TheMemoTheme
-import com.google.accompanist.insets.navigationBarsWithImePadding
 
 @Composable
 fun AddScreen(
@@ -33,7 +25,7 @@ fun AddScreen(
     addViewModel: AddViewModel,
     navController: NavController
 ) {
-    Column {
+    Column(modifier = modifier) {
         val titleState =
             remember { mutableStateOf(TextFieldValue(text = addViewModel.title.value ?: "")) }
         val contentState =
@@ -47,7 +39,6 @@ fun AddScreen(
             addViewModel = addViewModel,
             modifier = Modifier.weight(1f, true)
         )
-        EditorHelper()
     }
 }
 
@@ -101,30 +92,6 @@ fun ContentEditor(
     )
 }
 
-@Composable
-fun EditorHelper(
-    onUndoClick: () -> Unit = {},
-    onRedoClick: () -> Unit = {}
-) {
-    BottomAppBar(
-        modifier = Modifier
-            .fillMaxWidth()
-            .navigationBarsWithImePadding()
-    ) {
-        Spacer(modifier = Modifier.weight(1f, true))
-        IconButton(
-            onClick = onUndoClick
-        ) {
-            Icon(Icons.Filled.Undo, contentDescription = "Undo")
-        }
-        IconButton(
-            onClick = onRedoClick
-        ) {
-            Icon(Icons.Filled.Redo, contentDescription = "Redo")
-        }
-    }
-}
-
 @Preview
 @Composable
 fun PreviewTitleEditor() {
@@ -140,13 +107,5 @@ fun PreviewContentEditor() {
     TheMemoTheme {
         val bodyState = remember { mutableStateOf(TextFieldValue()) }
         ContentEditor(bodyState, modifier = Modifier.fillMaxWidth())
-    }
-}
-
-@Preview
-@Composable
-fun PreviewEditorHelper() {
-    TheMemoTheme {
-        EditorHelper()
     }
 }
