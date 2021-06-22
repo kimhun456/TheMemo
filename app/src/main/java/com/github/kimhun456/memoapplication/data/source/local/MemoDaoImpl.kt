@@ -14,6 +14,9 @@ import io.reactivex.rxjava3.core.Single
 abstract class MemoDaoImpl : MemoDao {
 
     @Insert
+    abstract override fun createMemo(memo: MemoEntity): Single<Long>
+
+    @Insert
     abstract override fun addMemo(memo: MemoEntity): Completable
 
     @Delete

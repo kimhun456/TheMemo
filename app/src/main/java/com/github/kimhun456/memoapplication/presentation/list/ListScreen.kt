@@ -23,10 +23,11 @@ import com.github.kimhun456.memoapplication.presentation.theme.TheMemoTheme
 
 @Composable
 fun ListScreen(
+    modifier: Modifier,
     listViewModel: ListViewModel,
     navController: NavController
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
         MemoList(listViewModel)
     }
 }

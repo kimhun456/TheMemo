@@ -22,26 +22,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.github.kimhun456.memoapplication.presentation.theme.TheMemoTheme
 import com.google.accompanist.insets.navigationBarsWithImePadding
 
 @Composable
 fun AddScreen(
+    modifier: Modifier,
     addViewModel: AddViewModel,
     navController: NavController
 ) {
-    Column() {
-        val titleState = remember { mutableStateOf(TextFieldValue()) }
-        val bodyState = remember { mutableStateOf(TextFieldValue()) }
-        TitleEditor(titleState = titleState)
-        ContentEditor(bodyState = bodyState, modifier = Modifier.weight(1f, true))
+    Column {
+        val titleState =
+            remember { mutableStateOf(TextFieldValue(text = addViewModel.title.value ?: "")) }
+        val contentState =
+            remember { mutableStateOf(TextFieldValue(text = addViewModel.content.value ?: "")) }
+        TitleEditor(
+            titleState = titleState,
+            addViewModel = addViewModel
+        )
+        ContentEditor(
+            contentState = contentState,
+            addViewModel = addViewModel,
+            modifier = Modifier.weight(1f, true)
+        )
         EditorHelper()
     }
 }
 
 @Composable
-fun TitleEditor(titleState: MutableState<TextFieldValue>) {
+fun TitleEditor(
+    titleState: MutableState<TextFieldValue>,
+    addViewModel: AddViewModel = hiltViewModel()
+) {
     TextField(
         placeholder = {
             Text(text = "Title")
@@ -49,7 +63,10 @@ fun TitleEditor(titleState: MutableState<TextFieldValue>) {
         value = titleState.value,
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.small.copy(),
-        onValueChange = { titleState.value = it },
+        onValueChange = {
+            titleState.value = it
+            addViewModel.title.value = it.text
+        },
         textStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.Bold),
         maxLines = 3,
         colors = TextFieldDefaults.textFieldColors(
@@ -62,16 +79,20 @@ fun TitleEditor(titleState: MutableState<TextFieldValue>) {
 
 @Composable
 fun ContentEditor(
-    bodyState: MutableState<TextFieldValue>,
+    contentState: MutableState<TextFieldValue>,
+    addViewModel: AddViewModel = hiltViewModel(),
     modifier: Modifier
 ) {
     TextField(
         placeholder = {
             Text(text = "Content")
         },
-        value = bodyState.value,
+        value = contentState.value,
         modifier = modifier.fillMaxWidth(),
-        onValueChange = { bodyState.value = it },
+        onValueChange = {
+            contentState.value = it
+            addViewModel.content.value = it.text
+        },
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = MaterialTheme.colors.surface,
             focusedIndicatorColor = MaterialTheme.colors.surface,
@@ -118,7 +139,7 @@ fun PreviewTitleEditor() {
 fun PreviewContentEditor() {
     TheMemoTheme {
         val bodyState = remember { mutableStateOf(TextFieldValue()) }
-        ContentEditor(bodyState, Modifier.fillMaxWidth())
+        ContentEditor(bodyState, modifier = Modifier.fillMaxWidth())
     }
 }
 

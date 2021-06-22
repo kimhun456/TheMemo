@@ -9,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.FabPosition
@@ -26,7 +27,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -62,7 +62,7 @@ fun TheMemoApp(
             TheMemoTopAppBar(
                 currentScreen = currentScreen,
                 onBackClick = {
-                    navController.navigate(TheMemoDestinations.ALL_LIST_ROUTE.name)
+                    navController.popBackStack()
                 }
             )
         },
@@ -77,12 +77,6 @@ fun TheMemoApp(
                 )
             ) {
                 TheMemoBottomAppBar(
-                    onClickMenuIcon = {
-                        showSnackbar(scope, scaffoldState.snackbarHostState, "Menu clicked")
-                    },
-                    onClickSettingsIcon = {
-                        showSnackbar(scope, scaffoldState.snackbarHostState, "setting clicked")
-                    },
                     onClickAddIcon = {
                         mainViewModel.addMemo()
                         showSnackbar(
@@ -105,9 +99,9 @@ fun TheMemoApp(
                 )
             ) {
                 AddButton {
-                    navController.navigate(
-                        route = TheMemoDestinations.ADD_ROUTE.name
-                    )
+                    navController.navigate(route = TheMemoDestinations.ADD_ROUTE.name) {
+                        launchSingleTop = true
+                    }
                 }
             }
         },
@@ -115,7 +109,10 @@ fun TheMemoApp(
         floatingActionButtonPosition = FabPosition.Center,
     )
     {
-        NavGraph(navController = navController)
+        NavGraph(
+            modifier = Modifier.padding(it),
+            navController = navController
+        )
     }
 }
 
@@ -191,27 +188,13 @@ fun TheMemoTopAppBar(
 
 @Composable
 fun TheMemoBottomAppBar(
-    onClickMenuIcon: () -> Unit = {},
-    onClickSettingsIcon: () -> Unit = {},
     onClickAddIcon: () -> Unit = {}
 ) {
     Column {
         BottomAppBar(
             cutoutShape = RoundedCornerShape(percent = 50)
         ) {
-            IconButton(onClick = onClickMenuIcon) {
-                Icon(
-                    Icons.Filled.Menu,
-                    contentDescription = "Menu"
-                )
-            }
             Spacer(Modifier.weight(1f, true))
-            IconButton(onClick = onClickSettingsIcon) {
-                Icon(
-                    Icons.Filled.Settings,
-                    contentDescription = "Settings"
-                )
-            }
             IconButton(onClick = onClickAddIcon) {
                 Icon(
                     Icons.Filled.Add,

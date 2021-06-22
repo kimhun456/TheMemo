@@ -6,6 +6,7 @@ import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 
 interface MemoDao {
+    fun createMemo(memo: MemoEntity): Single<Long>
     fun addMemo(memo: MemoEntity): Completable
     fun removeMemo(memo: MemoEntity): Completable
     fun updateMemo(memo: MemoEntity): Completable
