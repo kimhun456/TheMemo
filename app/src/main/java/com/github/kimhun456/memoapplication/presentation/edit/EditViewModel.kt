@@ -1,13 +1,14 @@
-package com.github.kimhun456.memoapplication.presentation.add
+package com.github.kimhun456.memoapplication.presentation.edit
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.github.kimhun456.memoapplication.domain.entity.Memo
-import com.github.kimhun456.memoapplication.domain.interactor.memo.CreateEmptyMemoUseCase
 import com.github.kimhun456.memoapplication.domain.interactor.memo.LoadMemoUseCase
 import com.github.kimhun456.memoapplication.domain.interactor.memo.RemoveMemoUseCase
 import com.github.kimhun456.memoapplication.domain.interactor.memo.UpdateMemoUseCase
+import com.github.kimhun456.memoapplication.presentation.constants.NavigationConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -15,8 +16,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class AddViewModel @Inject constructor(
-    private val createEmptyMemoUseCase: CreateEmptyMemoUseCase,
+class EditViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val updateMemoUseCase: UpdateMemoUseCase,
     private val loadMemoUseCase: LoadMemoUseCase,
     private val removeMemoUseCase: RemoveMemoUseCase
@@ -30,18 +31,23 @@ class AddViewModel @Inject constructor(
     private var currentMemo: Memo? = null
 
     init {
-        createAndLoadMemo()
+        val memoId = savedStateHandle.get<Long>(NavigationConstants.MEMO_ID)
+        Timber.i("get memo from $memoId")
+        memoId?.let {
+            loadMemo(it)
+        }
     }
 
-    private fun createAndLoadMemo() {
-        createEmptyMemoUseCase.createEmptyMemo()
-            .flatMap { loadMemoUseCase.loadMemo(it) }
+    private fun loadMemo(memoId: Long) {
+        loadMemoUseCase.loadMemo(memoId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    Timber.i("createAndLoadMemo Success $it")
+                    Timber.i("loadMemo Success $it")
                     currentMemo = it
+                    _title.value = it.title
+                    _content.value = it.message
                 },
                 { throwable -> Timber.e(throwable) }
             )

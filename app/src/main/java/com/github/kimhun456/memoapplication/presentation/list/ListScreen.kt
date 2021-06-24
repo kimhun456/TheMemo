@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.github.kimhun456.memoapplication.domain.entity.Memo
+import com.github.kimhun456.memoapplication.presentation.TheMemoDestinations
 import com.github.kimhun456.memoapplication.presentation.theme.TheMemoTheme
 
 @Composable
@@ -28,19 +29,25 @@ fun ListScreen(
     navController: NavController
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        MemoList(listViewModel)
+        MemoList(
+            listViewModel = listViewModel,
+            navController = navController
+        )
     }
 }
 
 @Composable
-fun MemoList(listViewModel: ListViewModel) {
+fun MemoList(
+    listViewModel: ListViewModel,
+    navController: NavController
+) {
     val memoList by listViewModel.memoList.observeAsState(listOf())
     LazyColumn(
         contentPadding = PaddingValues(top = 8.dp)
     ) {
         items(items = memoList) { memo ->
             MemoCard(memo) {
-                // TODO : go to memo
+                navController.navigate(TheMemoDestinations.EDIT_ROUTE.name + "/" + memo.id)
             }
         }
     }

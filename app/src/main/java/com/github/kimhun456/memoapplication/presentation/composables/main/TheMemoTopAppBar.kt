@@ -1,4 +1,4 @@
-package com.github.kimhun456.memoapplication.presentation.main
+package com.github.kimhun456.memoapplication.presentation.composables.main
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade

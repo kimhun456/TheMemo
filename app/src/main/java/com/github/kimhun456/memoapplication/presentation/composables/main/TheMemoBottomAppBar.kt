@@ -1,4 +1,4 @@
-package com.github.kimhun456.memoapplication.presentation.main
+package com.github.kimhun456.memoapplication.presentation.composables.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -32,30 +32,34 @@ fun TheMemoBottomAppBar(
         BottomAppBar(
             cutoutShape = RoundedCornerShape(percent = 50),
             modifier =
-            if (currentScreen == TheMemoDestinations.ADD_ROUTE)
-                Modifier
+            when (currentScreen) {
+                TheMemoDestinations.ADD_ROUTE, TheMemoDestinations.EDIT_ROUTE -> Modifier
                     .fillMaxWidth()
                     .navigationBarsWithImePadding()
-            else Modifier.fillMaxWidth()
+                else -> Modifier.fillMaxWidth()
+            }
         ) {
             Spacer(Modifier.weight(1f, true))
-            if (currentScreen == TheMemoDestinations.ALL_LIST_ROUTE) {
-                IconButton(onClick = onClickAddIcon) {
-                    Icon(
-                        Icons.Filled.Add,
-                        contentDescription = "Add"
-                    )
+            when (currentScreen) {
+                TheMemoDestinations.ALL_LIST_ROUTE -> {
+                    IconButton(onClick = onClickAddIcon) {
+                        Icon(
+                            Icons.Filled.Add,
+                            contentDescription = "Add"
+                        )
+                    }
                 }
-            } else if (currentScreen == TheMemoDestinations.ADD_ROUTE) {
-                IconButton(
-                    onClick = onUndoClick
-                ) {
-                    Icon(Icons.Filled.Undo, contentDescription = "Undo")
-                }
-                IconButton(
-                    onClick = onRedoClick
-                ) {
-                    Icon(Icons.Filled.Redo, contentDescription = "Redo")
+                TheMemoDestinations.ADD_ROUTE, TheMemoDestinations.EDIT_ROUTE -> {
+                    IconButton(
+                        onClick = onUndoClick
+                    ) {
+                        Icon(Icons.Filled.Undo, contentDescription = "Undo")
+                    }
+                    IconButton(
+                        onClick = onRedoClick
+                    ) {
+                        Icon(Icons.Filled.Redo, contentDescription = "Redo")
+                    }
                 }
             }
         }

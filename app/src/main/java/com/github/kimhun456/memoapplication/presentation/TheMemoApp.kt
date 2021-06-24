@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.github.kimhun456.memoapplication.presentation.main.CreateMemoButton
-import com.github.kimhun456.memoapplication.presentation.main.TheMemoBottomAppBar
-import com.github.kimhun456.memoapplication.presentation.main.TheMemoTopAppBar
+import com.github.kimhun456.memoapplication.presentation.composables.main.CreateMemoButton
+import com.github.kimhun456.memoapplication.presentation.composables.main.TheMemoBottomAppBar
+import com.github.kimhun456.memoapplication.presentation.composables.main.TheMemoTopAppBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
