@@ -63,7 +63,9 @@ class EditViewModel @Inject constructor(
 
     private fun finishMemo() {
         currentMemo?.let { memo ->
-            memo.lastModifiedTime = System.currentTimeMillis()
+            if (isModified()) {
+                memo.lastModifiedTime = System.currentTimeMillis()
+            }
             memo.title = title.value ?: ""
             memo.message = content.value ?: ""
             if (memo.title.isNotBlank() || memo.message.isNotBlank()) {
@@ -84,6 +86,13 @@ class EditViewModel @Inject constructor(
                     )
             }
         }
+    }
+
+    private fun isModified(): Boolean {
+        currentMemo?.let {
+            return it.title != title.value || it.message != content.value
+        }
+        return false
     }
 
     override fun onCleared() {

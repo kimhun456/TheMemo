@@ -32,7 +32,6 @@ fun NavGraph(
         }
         composable(TheMemoDestinations.ADD_ROUTE.name) {
             AddScreen(
-                modifier = modifier,
                 addViewModel = hiltViewModel(),
                 navController = navController
             )
@@ -42,7 +41,6 @@ fun NavGraph(
             arguments = listOf(navArgument(NavigationConstants.MEMO_ID) { type = NavType.LongType })
         ) {
             EditScreen(
-                modifier = modifier,
                 editViewModel = hiltViewModel(),
                 navController = navController
             )

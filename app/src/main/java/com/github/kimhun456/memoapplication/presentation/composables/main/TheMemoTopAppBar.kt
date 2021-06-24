@@ -45,13 +45,13 @@ fun TheMemoTopAppBar(
             navigationIcon = {
                 Crossfade(targetState = currentScreen) { screen ->
                     when (screen) {
-                        TheMemoDestinations.ADD_ROUTE ->
+                        TheMemoDestinations.ADD_ROUTE, TheMemoDestinations.EDIT_ROUTE ->
                             IconButton(
                                 onClick = onBackClick
                             ) {
                                 Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                             }
-                        TheMemoDestinations.ALL_LIST_ROUTE, TheMemoDestinations.EDIT_ROUTE ->
+                        TheMemoDestinations.ALL_LIST_ROUTE ->
                             IconButton(
                                 onClick = onMenuClick
                             ) {
@@ -83,8 +83,6 @@ fun TheMemoTopAppBar(
         )
     }
 }
-
-
 
 @Preview
 @Composable

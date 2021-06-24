@@ -40,17 +40,18 @@ fun TheMemoApp(
             )
         },
         bottomBar = {
-            TheMemoBottomAppBar(
-                currentScreen = currentScreen,
-                onClickAddIcon = {
-                    mainViewModel.addMemo()
-                    showSnackbar(
-                        scope,
-                        scaffoldState.snackbarHostState,
-                        "Add Generated Memo"
-                    )
-                }
-            )
+            if (currentScreen == TheMemoDestinations.ALL_LIST_ROUTE) {
+                TheMemoBottomAppBar(
+                    onClickAddIcon = {
+                        mainViewModel.addMemo()
+                        showSnackbar(
+                            scope,
+                            scaffoldState.snackbarHostState,
+                            "Add Generated Memo"
+                        )
+                    }
+                )
+            }
         },
         floatingActionButton = {
             if (currentScreen == TheMemoDestinations.ALL_LIST_ROUTE) {

@@ -7,15 +7,15 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.github.kimhun456.memoapplication.presentation.composables.editor.ContentEditor
+import com.github.kimhun456.memoapplication.presentation.composables.editor.EditorHelper
 import com.github.kimhun456.memoapplication.presentation.composables.editor.TitleEditor
 
 @Composable
 fun EditScreen(
-    modifier: Modifier,
     editViewModel: EditViewModel,
     navController: NavController
 ) {
-    Column(modifier = modifier) {
+    Column() {
 
         val title: String by editViewModel.title.observeAsState("")
         val content: String by editViewModel.content.observeAsState("")
@@ -31,5 +31,6 @@ fun EditScreen(
         ) {
             editViewModel.onContentChange(it)
         }
+        EditorHelper()
     }
 }
